@@ -283,15 +283,15 @@ func (api *PluginAPI) DeletePreferencesForUser(userID string, preferences []mode
 }
 
 func (api *PluginAPI) GetSession(sessionID string) (*model.Session, *model.AppError) {
-	return api.app.GetSessionById(sessionID)
+	return api.app.GetSessionById(api.ctx, sessionID)
 }
 
 func (api *PluginAPI) CreateSession(session *model.Session) (*model.Session, *model.AppError) {
-	return api.app.CreateSession(session)
+	return api.app.CreateSession(api.ctx, session)
 }
 
 func (api *PluginAPI) ExtendSessionExpiry(sessionID string, expiresAt int64) *model.AppError {
-	session, err := api.app.ch.srv.platform.GetSessionByID(sessionID)
+	session, err := api.app.ch.srv.platform.GetSessionByID(api.ctx, sessionID)
 	if err != nil {
 		return model.NewAppError("extendSessionExpiry", "app.session.get_sessions.app_error", nil, "", http.StatusInternalServerError).Wrap(err)
 	}
@@ -304,7 +304,7 @@ func (api *PluginAPI) ExtendSessionExpiry(sessionID string, expiresAt int64) *mo
 }
 
 func (api *PluginAPI) RevokeSession(sessionID string) *model.AppError {
-	return api.app.RevokeSessionById(sessionID)
+	return api.app.RevokeSessionById(api.ctx, sessionID)
 }
 
 func (api *PluginAPI) CreateUserAccessToken(token *model.UserAccessToken) (*model.UserAccessToken, *model.AppError) {

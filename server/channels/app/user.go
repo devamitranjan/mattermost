@@ -2329,7 +2329,7 @@ func (a *App) PromoteGuestToUser(c *request.Context, user *model.User, requestor
 		}
 	}
 
-	teamMembers, err := a.GetTeamMembersForUser(user.Id, "", true)
+	teamMembers, err := a.GetTeamMembersForUser(c, user.Id, "", true)
 	if err != nil {
 		c.Logger().Warn("Failed to get team members for user on promote guest to user", mlog.Err(err))
 	}
@@ -2373,7 +2373,7 @@ func (a *App) DemoteUserToGuest(c request.CTX, user *model.User) *model.AppError
 		c.Logger().Warn("Unable to update user sessions", mlog.String("user_id", demotedUser.Id), mlog.Err(uErr))
 	}
 
-	teamMembers, err := a.GetTeamMembersForUser(user.Id, "", true)
+	teamMembers, err := a.GetTeamMembersForUser(c, user.Id, "", true)
 	if err != nil {
 		c.Logger().Warn("Failed to get team members for users on demote user to guest", mlog.Err(err))
 	}

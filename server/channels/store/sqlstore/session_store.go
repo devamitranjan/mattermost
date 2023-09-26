@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/mattermost/mattermost/server/public/model"
+	"github.com/mattermost/mattermost/server/public/shared/request"
 	"github.com/mattermost/mattermost/server/v8/channels/store"
 )
 
@@ -28,7 +29,7 @@ func newSqlSessionStore(sqlStore *SqlStore) store.SessionStore {
 	return &SqlSessionStore{sqlStore}
 }
 
-func (me SqlSessionStore) Save(session *model.Session) (*model.Session, error) {
+func (me SqlSessionStore) Save(c request.CTX, session *model.Session) (*model.Session, error) {
 	if session.Id != "" {
 		return nil, store.NewErrInvalidInput("Session", "id", session.Id)
 	}
@@ -59,7 +60,7 @@ func (me SqlSessionStore) Save(session *model.Session) (*model.Session, error) {
 		return nil, errors.Wrapf(err, "failed to save Session with id=%s", session.Id)
 	}
 
-	teamMembers, err := me.Team().GetTeamsForUser(context.Background(), session.UserId, "", true)
+	teamMembers, err := me.Team().GetTeamsForUser(c, session.UserId, "", true)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to find TeamMembers for Session with userId=%s", session.UserId)
 	}
@@ -74,10 +75,10 @@ func (me SqlSessionStore) Save(session *model.Session) (*model.Session, error) {
 	return session, nil
 }
 
-func (me SqlSessionStore) Get(ctx context.Context, sessionIdOrToken string) (*model.Session, error) {
+func (me SqlSessionStore) Get(c request.CTX, sessionIdOrToken string) (*model.Session, error) {
 	sessions := []*model.Session{}
 
-	if err := me.DBXFromContext(ctx).Select(&sessions, "SELECT * FROM Sessions WHERE Token = ? OR Id = ? LIMIT 1", sessionIdOrToken, sessionIdOrToken); err != nil {
+	if err := me.DBXFromContext(c.Context()).Select(&sessions, "SELECT * FROM Sessions WHERE Token = ? OR Id = ? LIMIT 1", sessionIdOrToken, sessionIdOrToken); err != nil {
 		return nil, errors.Wrapf(err, "failed to find Sessions with sessionIdOrToken=%s", sessionIdOrToken)
 	}
 	if len(sessions) == 0 {
@@ -86,7 +87,7 @@ func (me SqlSessionStore) Get(ctx context.Context, sessionIdOrToken string) (*mo
 	session := sessions[0]
 
 	tempMembers, err := me.Team().GetTeamsForUser(
-		WithMaster(context.Background()),
+		RequestContextWithMaster(c),
 		session.UserId, "", true)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to find TeamMembers for Session with userId=%s", session.UserId)

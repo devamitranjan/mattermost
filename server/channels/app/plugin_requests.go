@@ -133,6 +133,7 @@ func (ch *Channels) servePluginRequest(w http.ResponseWriter, r *http.Request, h
 		AcceptLanguage: r.Header.Get("Accept-Language"),
 		UserAgent:      r.UserAgent(),
 	}
+
 	cookieAuth := false
 
 	authHeader := r.Header.Get(model.HeaderAuth)
@@ -188,8 +189,6 @@ func (ch *Channels) servePluginRequest(w http.ResponseWriter, r *http.Request, h
 				}
 
 				fields := []mlog.Field{
-					mlog.String("path", r.URL.Path),
-					mlog.String("ip", r.RemoteAddr),
 					mlog.String("session_id", sid),
 					mlog.String("user_id", userID),
 				}

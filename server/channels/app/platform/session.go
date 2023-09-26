@@ -4,12 +4,12 @@
 package platform
 
 import (
-	"context"
 	"fmt"
 	"time"
 
 	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/mattermost/mattermost/server/public/shared/mlog"
+	"github.com/mattermost/mattermost/server/public/shared/request"
 	"github.com/mattermost/mattermost/server/v8/channels/store/sqlstore"
 )
 
@@ -20,10 +20,10 @@ func (ps *PlatformService) ReturnSessionToPool(session *model.Session) {
 	}
 }
 
-func (ps *PlatformService) CreateSession(session *model.Session) (*model.Session, error) {
+func (ps *PlatformService) CreateSession(c *request.Context, session *model.Session) (*model.Session, error) {
 	session.Token = ""
 
-	session, err := ps.Store.Session().Save(session)
+	session, err := ps.Store.Session().Save(c, session)
 	if err != nil {
 		return nil, err
 	}
@@ -33,8 +33,8 @@ func (ps *PlatformService) CreateSession(session *model.Session) (*model.Session
 	return session, nil
 }
 
-func (ps *PlatformService) GetSessionContext(ctx context.Context, token string) (*model.Session, error) {
-	return ps.Store.Session().Get(ctx, token)
+func (ps *PlatformService) GetSessionContext(c *request.Context, token string) (*model.Session, error) {
+	return ps.Store.Session().Get(c, token)
 }
 
 func (ps *PlatformService) GetSessions(userID string) ([]*model.Session, error) {
@@ -113,11 +113,11 @@ func (ps *PlatformService) GetSession(token string) (*model.Session, error) {
 		return session, nil
 	}
 
-	return ps.GetSessionContext(sqlstore.WithMaster(context.Background()), token)
+	return ps.GetSessionContext(sqlstore.RequestContextWithMaster(request.EmptyContext(ps.logger)), token)
 }
 
-func (ps *PlatformService) GetSessionByID(sessionID string) (*model.Session, error) {
-	return ps.Store.Session().Get(context.Background(), sessionID)
+func (ps *PlatformService) GetSessionByID(c *request.Context, sessionID string) (*model.Session, error) {
+	return ps.Store.Session().Get(c, sessionID)
 }
 
 func (ps *PlatformService) RevokeSessionsFromAllUsers() error {
@@ -135,16 +135,16 @@ func (ps *PlatformService) RevokeSessionsFromAllUsers() error {
 	return nil
 }
 
-func (ps *PlatformService) RevokeSessionsForDeviceId(userID string, deviceID string, currentSessionId string) error {
+func (ps *PlatformService) RevokeSessionsForDeviceId(c *request.Context, userID string, deviceID string, currentSessionId string) error {
 	sessions, err := ps.Store.Session().GetSessions(userID)
 	if err != nil {
 		return err
 	}
 	for _, session := range sessions {
 		if session.DeviceId == deviceID && session.Id != currentSessionId {
-			mlog.Debug("Revoking sessionId for userId. Re-login with the same device Id", mlog.String("session_id", session.Id), mlog.String("user_id", userID))
+			c.Logger().Debug("Revoking sessionId for userId. Re-login with the same device Id", mlog.String("session_id", session.Id), mlog.String("user_id", userID))
 			if err := ps.RevokeSession(session); err != nil {
-				mlog.Warn("Could not revoke session for device", mlog.String("device_id", deviceID), mlog.Err(err))
+				c.Logger().Warn("Could not revoke session for device", mlog.String("device_id", deviceID), mlog.Err(err))
 			}
 		}
 	}

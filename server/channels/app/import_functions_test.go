@@ -1738,7 +1738,7 @@ func TestImportUserTeams(t *testing.T) {
 				} else {
 					require.Nil(t, err)
 				}
-				teamMembers, nErr := th.App.Srv().Store().Team().GetTeamsForUser(context.Background(), user.Id, "", true)
+				teamMembers, nErr := th.App.Srv().Store().Team().GetTeamsForUser(c, user.Id, "", true)
 				require.NoError(t, nErr)
 				require.Len(t, teamMembers, tc.expectedUserTeams)
 				if tc.expectedUserTeams == 1 {

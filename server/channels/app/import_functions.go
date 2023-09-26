@@ -805,7 +805,7 @@ func (a *App) importUserTeams(c request.CTX, user *model.User, data *[]imports.U
 		isAdminByTeamId          = map[string]bool{}
 	)
 
-	existingMemberships, nErr := a.Srv().Store().Team().GetTeamsForUser(context.Background(), user.Id, "", true)
+	existingMemberships, nErr := a.Srv().Store().Team().GetTeamsForUser(c, user.Id, "", true)
 	if nErr != nil {
 		return model.NewAppError("importUserTeams", "app.team.get_members.app_error", nil, "", http.StatusInternalServerError).Wrap(nErr)
 	}

@@ -794,7 +794,7 @@ func (a *App) JoinUserToTeam(c request.CTX, team *model.Team, user *model.User, 
 		TeamID:      team.Id,
 		ExcludeTeam: false,
 	}
-	if _, err := a.createInitialSidebarCategories(user.Id, opts); err != nil {
+	if _, err := a.createInitialSidebarCategories(c, user.Id, opts); err != nil {
 		mlog.Warn(
 			"Encountered an issue creating default sidebar categories.",
 			mlog.String("user_id", user.Id),
@@ -1009,8 +1009,8 @@ func (a *App) GetTeamMember(c request.CTX, teamID, userID string) (*model.TeamMe
 	return teamMember, nil
 }
 
-func (a *App) GetTeamMembersForUser(userID string, excludeTeamID string, includeDeleted bool) ([]*model.TeamMember, *model.AppError) {
-	teamMembers, err := a.Srv().Store().Team().GetTeamsForUser(context.Background(), userID, excludeTeamID, includeDeleted)
+func (a *App) GetTeamMembersForUser(c request.CTX, userID string, excludeTeamID string, includeDeleted bool) ([]*model.TeamMember, *model.AppError) {
+	teamMembers, err := a.Srv().Store().Team().GetTeamsForUser(c, userID, excludeTeamID, includeDeleted)
 	if err != nil {
 		return nil, model.NewAppError("GetTeamMembersForUser", "app.team.get_members.app_error", nil, "", http.StatusInternalServerError).Wrap(err)
 	}

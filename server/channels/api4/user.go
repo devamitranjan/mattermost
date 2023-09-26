@@ -2081,7 +2081,7 @@ func Logout(c *Context, w http.ResponseWriter, r *http.Request) {
 
 	c.RemoveSessionCookie(w, r)
 	if c.AppContext.Session().Id != "" {
-		if err := c.App.RevokeSessionById(c.AppContext.Session().Id); err != nil {
+		if err := c.App.RevokeSessionById(c.AppContext, c.AppContext.Session().Id); err != nil {
 			c.Err = err
 			return
 		}
@@ -2143,7 +2143,7 @@ func revokeSession(c *Context, w http.ResponseWriter, r *http.Request) {
 	}
 	audit.AddEventParameter(auditRec, "session_id", sessionId)
 
-	session, err := c.App.GetSessionById(sessionId)
+	session, err := c.App.GetSessionById(c.AppContext, sessionId)
 	if err != nil {
 		c.Err = err
 		return
@@ -2228,7 +2228,7 @@ func attachDeviceId(c *Context, w http.ResponseWriter, r *http.Request) {
 	audit.AddEventParameter(auditRec, "device_id", deviceId)
 
 	// A special case where we logout of all other sessions with the same device id
-	if err := c.App.RevokeSessionsForDeviceId(c.AppContext.Session().UserId, deviceId, c.AppContext.Session().Id); err != nil {
+	if err := c.App.RevokeSessionsForDeviceId(c.AppContext, c.AppContext.Session().UserId, deviceId, c.AppContext.Session().Id); err != nil {
 		c.Err = err
 		return
 	}
