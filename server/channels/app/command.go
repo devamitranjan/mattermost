@@ -279,7 +279,7 @@ func (a *App) MentionsToTeamMembers(c request.CTX, message, teamID string) model
 						continue
 					}
 
-					_, err := a.GetTeamMember(teamID, userFromTrimmed.Id)
+					_, err := a.GetTeamMember(c, teamID, userFromTrimmed.Id)
 					if err != nil {
 						// The user is not in the team, so we should ignore it
 						return
@@ -292,7 +292,7 @@ func (a *App) MentionsToTeamMembers(c request.CTX, message, teamID string) model
 				return
 			}
 
-			_, err := a.GetTeamMember(teamID, user.Id)
+			_, err := a.GetTeamMember(c, teamID, user.Id)
 			if err != nil {
 				// The user is not in the team, so we should ignore it
 				return

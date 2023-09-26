@@ -8670,7 +8670,7 @@ func (s *TimerLayerTeamStore) GetMany(ids []string) ([]*model.Team, error) {
 	return result, err
 }
 
-func (s *TimerLayerTeamStore) GetMember(ctx context.Context, teamID string, userID string) (*model.TeamMember, error) {
+func (s *TimerLayerTeamStore) GetMember(ctx request.CTX, teamID string, userID string) (*model.TeamMember, error) {
 	start := time.Now()
 
 	result, err := s.TeamStore.GetMember(ctx, teamID, userID)

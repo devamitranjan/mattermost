@@ -107,7 +107,7 @@ type UserService interface {
 //
 // The service shall be registered via app.TeamKey service key.
 type TeamService interface {
-	GetMember(teamID, userID string) (*model.TeamMember, *model.AppError)
+	GetMember(c request.CTX, teamID, userID string) (*model.TeamMember, *model.AppError)
 	CreateMember(ctx *request.Context, teamID, userID string) (*model.TeamMember, *model.AppError)
 	GetGroup(groupId string) (*model.Group, *model.AppError)
 	GetTeam(teamID string) (*model.Team, *model.AppError)

@@ -10990,7 +10990,7 @@ func (s *RetryLayerTeamStore) GetMany(ids []string) ([]*model.Team, error) {
 
 }
 
-func (s *RetryLayerTeamStore) GetMember(ctx context.Context, teamID string, userID string) (*model.TeamMember, error) {
+func (s *RetryLayerTeamStore) GetMember(ctx request.CTX, teamID string, userID string) (*model.TeamMember, error) {
 
 	tries := 0
 	for {

@@ -9626,7 +9626,7 @@ func (s *OpenTracingLayerTeamStore) GetMany(ids []string) ([]*model.Team, error)
 	return result, err
 }
 
-func (s *OpenTracingLayerTeamStore) GetMember(ctx context.Context, teamID string, userID string) (*model.TeamMember, error) {
+func (s *OpenTracingLayerTeamStore) GetMember(ctx request.CTX, teamID string, userID string) (*model.TeamMember, error) {
 	origCtx := s.Root.Store.Context()
 	span, newCtx := tracing.StartSpanWithParentByContext(s.Root.Store.Context(), "TeamStore.GetMember")
 	s.Root.Store.SetContext(newCtx)

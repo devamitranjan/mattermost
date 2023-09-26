@@ -34,7 +34,7 @@ func (s *permissionsServiceWrapper) HasPermissionTo(userID string, permission *m
 }
 
 func (s *permissionsServiceWrapper) HasPermissionToTeam(userID string, teamID string, permission *model.Permission) bool {
-	return s.app.HasPermissionToTeam(userID, teamID, permission)
+	return s.app.HasPermissionToTeam(request.EmptyContext(s.app.Log()), userID, teamID, permission)
 }
 
 func (s *permissionsServiceWrapper) HasPermissionToChannel(askingUserID string, channelID string, permission *model.Permission) bool {

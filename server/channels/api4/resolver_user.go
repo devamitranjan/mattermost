@@ -183,7 +183,7 @@ func getGraphQLUsers(c *web.Context, userIDs []string) ([]*model.User, error) {
 	// and cached for the rest of the query. So it's not an issue
 	// to run this in a loop.
 	for _, id := range userIDs {
-		canSee, appErr := c.App.UserCanSeeOtherUser(c.AppContext.Session().UserId, id)
+		canSee, appErr := c.App.UserCanSeeOtherUser(c.AppContext, c.AppContext.Session().UserId, id)
 		if appErr != nil || !canSee {
 			c.SetPermissionError(model.PermissionViewMembers)
 			return nil, c.Err

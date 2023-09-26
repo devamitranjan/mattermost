@@ -213,7 +213,7 @@ func (api *PluginAPI) GetTeamMembers(teamID string, page, perPage int) ([]*model
 }
 
 func (api *PluginAPI) GetTeamMember(teamID, userID string) (*model.TeamMember, *model.AppError) {
-	return api.app.GetTeamMember(teamID, userID)
+	return api.app.GetTeamMember(api.ctx, teamID, userID)
 }
 
 func (api *PluginAPI) GetTeamMembersForUser(userID string, page int, perPage int) ([]*model.TeamMember, *model.AppError) {
@@ -221,7 +221,7 @@ func (api *PluginAPI) GetTeamMembersForUser(userID string, page int, perPage int
 }
 
 func (api *PluginAPI) UpdateTeamMemberRoles(teamID, userID, newRoles string) (*model.TeamMember, *model.AppError) {
-	return api.app.UpdateTeamMemberRoles(teamID, userID, newRoles)
+	return api.app.UpdateTeamMemberRoles(api.ctx, teamID, userID, newRoles)
 }
 
 func (api *PluginAPI) GetTeamStats(teamID string) (*model.TeamStats, *model.AppError) {
@@ -963,7 +963,7 @@ func (api *PluginAPI) HasPermissionTo(userID string, permission *model.Permissio
 }
 
 func (api *PluginAPI) HasPermissionToTeam(userID, teamID string, permission *model.Permission) bool {
-	return api.app.HasPermissionToTeam(userID, teamID, permission)
+	return api.app.HasPermissionToTeam(api.ctx, userID, teamID, permission)
 }
 
 func (api *PluginAPI) HasPermissionToChannel(userID, channelID string, permission *model.Permission) bool {
