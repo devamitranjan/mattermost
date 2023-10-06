@@ -317,7 +317,7 @@ func (api *PluginAPI) RevokeUserAccessToken(tokenID string) *model.AppError {
 		return err
 	}
 
-	return api.app.RevokeUserAccessToken(accessToken)
+	return api.app.RevokeUserAccessToken(api.ctx, accessToken)
 }
 
 func (api *PluginAPI) UpdateUser(user *model.User) (*model.User, *model.AppError) {

@@ -493,7 +493,7 @@ func (a *App) GetAuthorizedAppsForUser(userID string, page, perPage int) ([]*mod
 	return apps, nil
 }
 
-func (a *App) DeauthorizeOAuthAppForUser(userID, appID string) *model.AppError {
+func (a *App) DeauthorizeOAuthAppForUser(c *request.Context, userID, appID string) *model.AppError {
 	if !*a.Config().ServiceSettings.EnableOAuthServiceProvider {
 		return model.NewAppError("DeauthorizeOAuthAppForUser", "api.oauth.allow_oauth.turn_off.app_error", nil, "", http.StatusNotImplemented)
 	}
@@ -505,7 +505,7 @@ func (a *App) DeauthorizeOAuthAppForUser(userID, appID string) *model.AppError {
 	}
 
 	for _, ad := range accessData {
-		if err := a.RevokeAccessToken(ad.Token); err != nil {
+		if err := a.RevokeAccessToken(c, ad.Token); err != nil {
 			return err
 		}
 
@@ -548,8 +548,8 @@ func (a *App) RegenerateOAuthAppSecret(app *model.OAuthApp) (*model.OAuthApp, *m
 	return app, nil
 }
 
-func (a *App) RevokeAccessToken(token string) *model.AppError {
-	if err := a.ch.srv.platform.RevokeAccessToken(token); err != nil {
+func (a *App) RevokeAccessToken(c *request.Context, token string) *model.AppError {
+	if err := a.ch.srv.platform.RevokeAccessToken(c, token); err != nil {
 		switch {
 		case errors.Is(err, platform.GetTokenError):
 			return model.NewAppError("RevokeAccessToken", "api.oauth.revoke_access_token.get.app_error", nil, "", http.StatusBadRequest).Wrap(err)
@@ -678,7 +678,7 @@ func (a *App) CompleteSwitchWithOAuth(c *request.Context, service string, userDa
 		return nil, model.NewAppError("CompleteSwitchWithOAuth", MissingAccountError, nil, "", http.StatusInternalServerError).Wrap(nErr)
 	}
 
-	if err := a.RevokeAllSessions(user.Id); err != nil {
+	if err := a.RevokeAllSessions(c, user.Id); err != nil {
 		return nil, err
 	}
 
@@ -969,7 +969,7 @@ func (a *App) SwitchEmailToOAuth(c *request.Context, w http.ResponseWriter, r *h
 	return authURL, nil
 }
 
-func (a *App) SwitchOAuthToEmail(email, password, requesterId string) (string, *model.AppError) {
+func (a *App) SwitchOAuthToEmail(c *request.Context, email, password, requesterId string) (string, *model.AppError) {
 	if a.Srv().License() != nil && !*a.Config().ServiceSettings.ExperimentalEnableAuthenticationTransfer {
 		return "", model.NewAppError("oauthToEmail", "api.user.oauth_to_email.not_available.app_error", nil, "", http.StatusForbidden)
 	}
@@ -991,11 +991,11 @@ func (a *App) SwitchOAuthToEmail(email, password, requesterId string) (string, *
 
 	a.Srv().Go(func() {
 		if err := a.Srv().EmailService.SendSignInChangeEmail(user.Email, T("api.templates.signin_change_email.body.method_email"), user.Locale, a.GetSiteURL()); err != nil {
-			mlog.Error("error sending signin change email", mlog.Err(err))
+			c.Logger().Error("error sending signin change email", mlog.Err(err))
 		}
 	})
 
-	if err := a.RevokeAllSessions(requesterId); err != nil {
+	if err := a.RevokeAllSessions(c, requesterId); err != nil {
 		return "", err
 	}
 

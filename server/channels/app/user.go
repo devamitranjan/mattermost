@@ -918,7 +918,7 @@ func (a *App) UpdatePasswordAsUser(c request.CTX, userID, currentPassword, newPa
 	return a.UpdatePasswordSendEmail(c, user, newPassword, T("api.user.update_password.menu"))
 }
 
-func (a *App) userDeactivated(c request.CTX, userID string) *model.AppError {
+func (a *App) userDeactivated(c *request.Context, userID string) *model.AppError {
 	a.SetStatusOffline(userID, false)
 
 	user, err := a.GetUser(userID)
@@ -967,7 +967,7 @@ func (a *App) invalidateUserChannelMembersCaches(c request.CTX, userID string) *
 	return nil
 }
 
-func (a *App) UpdateActive(c request.CTX, user *model.User, active bool) (*model.User, *model.AppError) {
+func (a *App) UpdateActive(c *request.Context, user *model.User, active bool) (*model.User, *model.AppError) {
 	user.UpdateAt = model.GetMillis()
 	if active {
 		user.DeleteAt = 0
@@ -991,7 +991,7 @@ func (a *App) UpdateActive(c request.CTX, user *model.User, active bool) (*model
 	ruser := userUpdate.New
 
 	if !active {
-		if err := a.RevokeAllSessions(ruser.Id); err != nil {
+		if err := a.RevokeAllSessions(c, ruser.Id); err != nil {
 			return nil, err
 		}
 		if err := a.userDeactivated(c, ruser.Id); err != nil {
@@ -1024,7 +1024,7 @@ func (a *App) DeactivateGuests(c *request.Context) *model.AppError {
 	}
 
 	for _, userID := range userIDs {
-		if err := a.Srv().Platform().RevokeAllSessions(userID); err != nil {
+		if err := a.Srv().Platform().RevokeAllSessions(c, userID); err != nil {
 			return model.NewAppError("DeactivateGuests", "app.user.update_active_for_multiple_users.updating.app_error", nil, "", http.StatusInternalServerError).Wrap(err)
 		}
 	}
@@ -1301,7 +1301,7 @@ func (a *App) UpdateUser(c request.CTX, user *model.User, sendNotifications bool
 	return newUser, nil
 }
 
-func (a *App) UpdateUserActive(c request.CTX, userID string, active bool) *model.AppError {
+func (a *App) UpdateUserActive(c *request.Context, userID string, active bool) *model.AppError {
 	user, err := a.GetUser(userID)
 
 	if err != nil {

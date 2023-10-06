@@ -3896,7 +3896,7 @@ func TestLoginWithLag(t *testing.T) {
 		mainHelper.SQLStore.UpdateLicense(model.NewTestLicense("ldap"))
 		mainHelper.ToggleReplicasOff()
 
-		appErr := th.App.RevokeAllSessions(th.BasicUser.Id)
+		appErr := th.App.RevokeAllSessions(th.Context, th.BasicUser.Id)
 		require.Nil(t, appErr)
 
 		mainHelper.ToggleReplicasOn()

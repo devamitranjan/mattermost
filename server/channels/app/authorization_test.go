@@ -333,7 +333,7 @@ func TestSessionHasPermissionToManageUserOrBot(t *testing.T) {
 func TestHasPermissionToCategory(t *testing.T) {
 	th := Setup(t).InitBasic()
 	defer th.TearDown()
-	session, err := th.App.CreateSession(&model.Session{UserId: th.BasicUser.Id, Props: model.StringMap{}})
+	session, err := th.App.CreateSession(th.Context, &model.Session{UserId: th.BasicUser.Id, Props: model.StringMap{}})
 	require.Nil(t, err)
 
 	categories, err := th.App.GetSidebarCategoriesForTeamForUser(th.Context, th.BasicUser.Id, th.BasicTeam.Id)
@@ -419,7 +419,7 @@ func TestSessionHasPermissionToGroup(t *testing.T) {
 			th.RemovePermissionFromRole(permission.Id, groupRole.Name)
 		}
 
-		session, err := th.App.CreateSession(&model.Session{UserId: th.BasicUser.Id, Props: model.StringMap{}, Roles: systemRole.Name})
+		session, err := th.App.CreateSession(th.Context, &model.Session{UserId: th.BasicUser.Id, Props: model.StringMap{}, Roles: systemRole.Name})
 		require.Nil(t, err)
 
 		result := th.App.SessionHasPermissionToGroup(*session, group.Id, permission)

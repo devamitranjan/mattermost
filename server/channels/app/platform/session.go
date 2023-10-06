@@ -10,7 +10,6 @@ import (
 	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/mattermost/mattermost/server/public/shared/mlog"
 	"github.com/mattermost/mattermost/server/public/shared/request"
-	"github.com/mattermost/mattermost/server/v8/channels/store/sqlstore"
 )
 
 func (ps *PlatformService) ReturnSessionToPool(session *model.Session) {
@@ -97,7 +96,7 @@ func (ps *PlatformService) ClearAllUsersSessionCache() {
 	}
 }
 
-func (ps *PlatformService) GetSession(token string) (*model.Session, error) {
+func (ps *PlatformService) GetSession(c *request.Context, token string) (*model.Session, error) {
 	var session = ps.sessionPool.Get().(*model.Session)
 	if err := ps.sessionCache.Get(token, session); err == nil {
 		if m := ps.metricsIFace; m != nil {
@@ -113,7 +112,7 @@ func (ps *PlatformService) GetSession(token string) (*model.Session, error) {
 		return session, nil
 	}
 
-	return ps.GetSessionContext(sqlstore.RequestContextWithMaster(request.EmptyContext(ps.logger)), token)
+	return ps.GetSessionContext(c, token)
 }
 
 func (ps *PlatformService) GetSessionByID(c *request.Context, sessionID string) (*model.Session, error) {
@@ -143,7 +142,7 @@ func (ps *PlatformService) RevokeSessionsForDeviceId(c *request.Context, userID 
 	for _, session := range sessions {
 		if session.DeviceId == deviceID && session.Id != currentSessionId {
 			c.Logger().Debug("Revoking sessionId for userId. Re-login with the same device Id", mlog.String("session_id", session.Id), mlog.String("user_id", userID))
-			if err := ps.RevokeSession(session); err != nil {
+			if err := ps.RevokeSession(c, session); err != nil {
 				c.Logger().Warn("Could not revoke session for device", mlog.String("device_id", deviceID), mlog.Err(err))
 			}
 		}
@@ -152,9 +151,9 @@ func (ps *PlatformService) RevokeSessionsForDeviceId(c *request.Context, userID 
 	return nil
 }
 
-func (ps *PlatformService) RevokeSession(session *model.Session) error {
+func (ps *PlatformService) RevokeSession(c *request.Context, session *model.Session) error {
 	if session.IsOAuth {
-		if err := ps.RevokeAccessToken(session.Token); err != nil {
+		if err := ps.RevokeAccessToken(c, session.Token); err != nil {
 			return err
 		}
 	} else {
@@ -168,8 +167,8 @@ func (ps *PlatformService) RevokeSession(session *model.Session) error {
 	return nil
 }
 
-func (ps *PlatformService) RevokeAccessToken(token string) error {
-	session, _ := ps.GetSession(token)
+func (ps *PlatformService) RevokeAccessToken(c *request.Context, token string) error {
+	session, _ := ps.GetSession(c, token)
 
 	defer ps.ReturnSessionToPool(session)
 
@@ -241,14 +240,14 @@ func (ps *PlatformService) UpdateSessionsIsGuest(userID string, isGuest bool) er
 	return nil
 }
 
-func (ps *PlatformService) RevokeAllSessions(userID string) error {
+func (ps *PlatformService) RevokeAllSessions(c *request.Context, userID string) error {
 	sessions, err := ps.Store.Session().GetSessions(userID)
 	if err != nil {
 		return fmt.Errorf("%s: %w", err.Error(), GetSessionError)
 	}
 	for _, session := range sessions {
 		if session.IsOAuth {
-			ps.RevokeAccessToken(session.Token)
+			ps.RevokeAccessToken(c, session.Token)
 		} else {
 			if err := ps.Store.Session().Remove(session.Id); err != nil {
 				return fmt.Errorf("%s: %w", err.Error(), DeleteSessionError)

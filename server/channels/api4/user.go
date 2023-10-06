@@ -2157,7 +2157,7 @@ func revokeSession(c *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := c.App.RevokeSession(session); err != nil {
+	if err := c.App.RevokeSession(c.AppContext, session); err != nil {
 		c.Err = err
 		return
 	}
@@ -2183,7 +2183,7 @@ func revokeAllSessionsForUser(c *Context, w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := c.App.RevokeAllSessions(c.Params.UserId); err != nil {
+	if err := c.App.RevokeAllSessions(c.AppContext, c.Params.UserId); err != nil {
 		c.Err = err
 		return
 	}
@@ -2388,7 +2388,7 @@ func switchAccountType(c *Context, w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		link, err = c.App.SwitchOAuthToEmail(switchRequest.Email, switchRequest.NewPassword, c.AppContext.Session().UserId)
+		link, err = c.App.SwitchOAuthToEmail(c.AppContext, switchRequest.Email, switchRequest.NewPassword, c.AppContext.Session().UserId)
 	} else if switchRequest.EmailToLdap() {
 		link, err = c.App.SwitchEmailToLdap(c.AppContext, switchRequest.Email, switchRequest.Password, switchRequest.MfaCode, switchRequest.LdapLoginId, switchRequest.NewPassword)
 	} else if switchRequest.LdapToEmail() {
@@ -2623,7 +2623,7 @@ func revokeUserAccessToken(c *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = c.App.RevokeUserAccessToken(accessToken); err != nil {
+	if err = c.App.RevokeUserAccessToken(c.AppContext, accessToken); err != nil {
 		c.Err = err
 		return
 	}
@@ -2668,7 +2668,7 @@ func disableUserAccessToken(c *Context, w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if err = c.App.DisableUserAccessToken(accessToken); err != nil {
+	if err = c.App.DisableUserAccessToken(c.AppContext, accessToken); err != nil {
 		c.Err = err
 		return
 	}
@@ -2713,7 +2713,7 @@ func enableUserAccessToken(c *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = c.App.EnableUserAccessToken(accessToken); err != nil {
+	if err = c.App.EnableUserAccessToken(c.AppContext, accessToken); err != nil {
 		c.Err = err
 		return
 	}

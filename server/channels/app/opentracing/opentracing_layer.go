@@ -2857,7 +2857,7 @@ func (a *OpenTracingAppLayer) DeactivateMfa(userID string) *model.AppError {
 	return resultVar0
 }
 
-func (a *OpenTracingAppLayer) DeauthorizeOAuthAppForUser(userID string, appID string) *model.AppError {
+func (a *OpenTracingAppLayer) DeauthorizeOAuthAppForUser(c *request.Context, userID string, appID string) *model.AppError {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.DeauthorizeOAuthAppForUser")
 
@@ -2869,7 +2869,7 @@ func (a *OpenTracingAppLayer) DeauthorizeOAuthAppForUser(userID string, appID st
 	}()
 
 	defer span.Finish()
-	resultVar0 := a.app.DeauthorizeOAuthAppForUser(userID, appID)
+	resultVar0 := a.app.DeauthorizeOAuthAppForUser(c, userID, appID)
 
 	if resultVar0 != nil {
 		span.LogFields(spanlog.Error(resultVar0))
@@ -3659,7 +3659,7 @@ func (a *OpenTracingAppLayer) DisablePlugin(id string) *model.AppError {
 	return resultVar0
 }
 
-func (a *OpenTracingAppLayer) DisableUserAccessToken(token *model.UserAccessToken) *model.AppError {
+func (a *OpenTracingAppLayer) DisableUserAccessToken(c *request.Context, token *model.UserAccessToken) *model.AppError {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.DisableUserAccessToken")
 
@@ -3671,7 +3671,7 @@ func (a *OpenTracingAppLayer) DisableUserAccessToken(token *model.UserAccessToke
 	}()
 
 	defer span.Finish()
-	resultVar0 := a.app.DisableUserAccessToken(token)
+	resultVar0 := a.app.DisableUserAccessToken(c, token)
 
 	if resultVar0 != nil {
 		span.LogFields(spanlog.Error(resultVar0))
@@ -4042,7 +4042,7 @@ func (a *OpenTracingAppLayer) EnablePlugin(id string) *model.AppError {
 	return resultVar0
 }
 
-func (a *OpenTracingAppLayer) EnableUserAccessToken(token *model.UserAccessToken) *model.AppError {
+func (a *OpenTracingAppLayer) EnableUserAccessToken(c *request.Context, token *model.UserAccessToken) *model.AppError {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.EnableUserAccessToken")
 
@@ -4054,7 +4054,7 @@ func (a *OpenTracingAppLayer) EnableUserAccessToken(token *model.UserAccessToken
 	}()
 
 	defer span.Finish()
-	resultVar0 := a.app.EnableUserAccessToken(token)
+	resultVar0 := a.app.EnableUserAccessToken(c, token)
 
 	if resultVar0 != nil {
 		span.LogFields(spanlog.Error(resultVar0))
@@ -4103,7 +4103,7 @@ func (a *OpenTracingAppLayer) EnvironmentConfig(filter func(reflect.StructField)
 	return resultVar0
 }
 
-func (a *OpenTracingAppLayer) ExecuteCommand(c request.CTX, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
+func (a *OpenTracingAppLayer) ExecuteCommand(c *request.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.ExecuteCommand")
 
@@ -14446,7 +14446,7 @@ func (a *OpenTracingAppLayer) ReturnSessionToPool(session *model.Session) {
 	a.app.ReturnSessionToPool(session)
 }
 
-func (a *OpenTracingAppLayer) RevokeAccessToken(token string) *model.AppError {
+func (a *OpenTracingAppLayer) RevokeAccessToken(c *request.Context, token string) *model.AppError {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.RevokeAccessToken")
 
@@ -14458,7 +14458,7 @@ func (a *OpenTracingAppLayer) RevokeAccessToken(token string) *model.AppError {
 	}()
 
 	defer span.Finish()
-	resultVar0 := a.app.RevokeAccessToken(token)
+	resultVar0 := a.app.RevokeAccessToken(c, token)
 
 	if resultVar0 != nil {
 		span.LogFields(spanlog.Error(resultVar0))
@@ -14468,7 +14468,7 @@ func (a *OpenTracingAppLayer) RevokeAccessToken(token string) *model.AppError {
 	return resultVar0
 }
 
-func (a *OpenTracingAppLayer) RevokeAllSessions(userID string) *model.AppError {
+func (a *OpenTracingAppLayer) RevokeAllSessions(c *request.Context, userID string) *model.AppError {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.RevokeAllSessions")
 
@@ -14480,7 +14480,7 @@ func (a *OpenTracingAppLayer) RevokeAllSessions(userID string) *model.AppError {
 	}()
 
 	defer span.Finish()
-	resultVar0 := a.app.RevokeAllSessions(userID)
+	resultVar0 := a.app.RevokeAllSessions(c, userID)
 
 	if resultVar0 != nil {
 		span.LogFields(spanlog.Error(resultVar0))
@@ -14490,7 +14490,7 @@ func (a *OpenTracingAppLayer) RevokeAllSessions(userID string) *model.AppError {
 	return resultVar0
 }
 
-func (a *OpenTracingAppLayer) RevokeSession(session *model.Session) *model.AppError {
+func (a *OpenTracingAppLayer) RevokeSession(c *request.Context, session *model.Session) *model.AppError {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.RevokeSession")
 
@@ -14502,7 +14502,7 @@ func (a *OpenTracingAppLayer) RevokeSession(session *model.Session) *model.AppEr
 	}()
 
 	defer span.Finish()
-	resultVar0 := a.app.RevokeSession(session)
+	resultVar0 := a.app.RevokeSession(c, session)
 
 	if resultVar0 != nil {
 		span.LogFields(spanlog.Error(resultVar0))
@@ -14578,7 +14578,7 @@ func (a *OpenTracingAppLayer) RevokeSessionsFromAllUsers() *model.AppError {
 	return resultVar0
 }
 
-func (a *OpenTracingAppLayer) RevokeUserAccessToken(token *model.UserAccessToken) *model.AppError {
+func (a *OpenTracingAppLayer) RevokeUserAccessToken(c *request.Context, token *model.UserAccessToken) *model.AppError {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.RevokeUserAccessToken")
 
@@ -14590,7 +14590,7 @@ func (a *OpenTracingAppLayer) RevokeUserAccessToken(token *model.UserAccessToken
 	}()
 
 	defer span.Finish()
-	resultVar0 := a.app.RevokeUserAccessToken(token)
+	resultVar0 := a.app.RevokeUserAccessToken(c, token)
 
 	if resultVar0 != nil {
 		span.LogFields(spanlog.Error(resultVar0))
@@ -16714,7 +16714,7 @@ func (a *OpenTracingAppLayer) SwitchLdapToEmail(c *request.Context, ldapPassword
 	return resultVar0, resultVar1
 }
 
-func (a *OpenTracingAppLayer) SwitchOAuthToEmail(email string, password string, requesterId string) (string, *model.AppError) {
+func (a *OpenTracingAppLayer) SwitchOAuthToEmail(c *request.Context, email string, password string, requesterId string) (string, *model.AppError) {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.SwitchOAuthToEmail")
 
@@ -16726,7 +16726,7 @@ func (a *OpenTracingAppLayer) SwitchOAuthToEmail(email string, password string, 
 	}()
 
 	defer span.Finish()
-	resultVar0, resultVar1 := a.app.SwitchOAuthToEmail(email, password, requesterId)
+	resultVar0, resultVar1 := a.app.SwitchOAuthToEmail(c, email, password, requesterId)
 
 	if resultVar1 != nil {
 		span.LogFields(spanlog.Error(resultVar1))
@@ -17094,7 +17094,7 @@ func (a *OpenTracingAppLayer) UnregisterPluginCommand(pluginID string, teamID st
 	a.app.UnregisterPluginCommand(pluginID, teamID, trigger)
 }
 
-func (a *OpenTracingAppLayer) UpdateActive(c request.CTX, user *model.User, active bool) (*model.User, *model.AppError) {
+func (a *OpenTracingAppLayer) UpdateActive(c *request.Context, user *model.User, active bool) (*model.User, *model.AppError) {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.UpdateActive")
 
@@ -17116,7 +17116,7 @@ func (a *OpenTracingAppLayer) UpdateActive(c request.CTX, user *model.User, acti
 	return resultVar0, resultVar1
 }
 
-func (a *OpenTracingAppLayer) UpdateBotActive(c request.CTX, botUserId string, active bool) (*model.Bot, *model.AppError) {
+func (a *OpenTracingAppLayer) UpdateBotActive(c *request.Context, botUserId string, active bool) (*model.Bot, *model.AppError) {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.UpdateBotActive")
 
@@ -18190,7 +18190,7 @@ func (a *OpenTracingAppLayer) UpdateUser(c request.CTX, user *model.User, sendNo
 	return resultVar0, resultVar1
 }
 
-func (a *OpenTracingAppLayer) UpdateUserActive(c request.CTX, userID string, active bool) *model.AppError {
+func (a *OpenTracingAppLayer) UpdateUserActive(c *request.Context, userID string, active bool) *model.AppError {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.UpdateUserActive")
 

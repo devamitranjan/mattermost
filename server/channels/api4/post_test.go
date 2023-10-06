@@ -425,7 +425,7 @@ func TestCreatePostWithOAuthClient(t *testing.T) {
 	})
 	require.Nil(t, appErr, "should create an OAuthApp")
 
-	session, appErr := th.App.CreateSession(&model.Session{
+	session, appErr := th.App.CreateSession(th.Context, &model.Session{
 		UserId:  th.BasicUser.Id,
 		Token:   "token",
 		IsOAuth: true,
