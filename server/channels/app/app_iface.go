@@ -129,7 +129,7 @@ type AppIface interface {
 	DeletePublicKey(name string) *model.AppError
 	// DemoteUserToGuest Convert user's roles and all his membership's roles from
 	// regular user roles to guest roles.
-	DemoteUserToGuest(c request.CTX, user *model.User) *model.AppError
+	DemoteUserToGuest(c *request.Context, user *model.User) *model.AppError
 	// DisablePlugin will set the config for an installed plugin to disabled, triggering deactivation if active.
 	// Notifies cluster peers through config change.
 	DisablePlugin(id string) *model.AppError
@@ -769,7 +769,7 @@ type AppIface interface {
 	GetSchemesPage(scope string, page int, perPage int) ([]*model.Scheme, *model.AppError)
 	GetSession(token string) (*model.Session, *model.AppError)
 	GetSessionById(c *request.Context, sessionID string) (*model.Session, *model.AppError)
-	GetSessions(userID string) ([]*model.Session, *model.AppError)
+	GetSessions(c *request.Context, userID string) ([]*model.Session, *model.AppError)
 	GetSharedChannel(channelID string) (*model.SharedChannel, error)
 	GetSharedChannelRemote(id string) (*model.SharedChannelRemote, error)
 	GetSharedChannelRemoteByIds(channelID string, remoteID string) (*model.SharedChannelRemote, error)

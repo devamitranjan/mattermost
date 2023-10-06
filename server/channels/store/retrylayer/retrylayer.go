@@ -9451,11 +9451,11 @@ func (s *RetryLayerSessionStore) Get(c request.CTX, sessionIDOrToken string) (*m
 
 }
 
-func (s *RetryLayerSessionStore) GetSessions(userID string) ([]*model.Session, error) {
+func (s *RetryLayerSessionStore) GetSessions(c *request.Context, userID string) ([]*model.Session, error) {
 
 	tries := 0
 	for {
-		result, err := s.SessionStore.GetSessions(userID)
+		result, err := s.SessionStore.GetSessions(c, userID)
 		if err == nil {
 			return result, nil
 		}

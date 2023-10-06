@@ -139,7 +139,7 @@ func (u *user) Sessions(ctx context.Context) ([]*model.Session, error) {
 		return nil, c.Err
 	}
 
-	sessions, appErr := c.App.GetSessions(u.Id)
+	sessions, appErr := c.App.GetSessions(c.AppContext, u.Id)
 	if appErr != nil {
 		return nil, appErr
 	}

@@ -36,8 +36,8 @@ func (ps *PlatformService) GetSessionContext(c *request.Context, token string) (
 	return ps.Store.Session().Get(c, token)
 }
 
-func (ps *PlatformService) GetSessions(userID string) ([]*model.Session, error) {
-	return ps.Store.Session().GetSessions(userID)
+func (ps *PlatformService) GetSessions(c *request.Context, userID string) ([]*model.Session, error) {
+	return ps.Store.Session().GetSessions(c, userID)
 }
 
 func (ps *PlatformService) AddSessionToCache(session *model.Session) {
@@ -135,7 +135,7 @@ func (ps *PlatformService) RevokeSessionsFromAllUsers() error {
 }
 
 func (ps *PlatformService) RevokeSessionsForDeviceId(c *request.Context, userID string, deviceID string, currentSessionId string) error {
-	sessions, err := ps.Store.Session().GetSessions(userID)
+	sessions, err := ps.Store.Session().GetSessions(c, userID)
 	if err != nil {
 		return err
 	}
@@ -222,8 +222,8 @@ func (ps *PlatformService) ExtendSessionExpiry(session *model.Session, newExpiry
 	return nil
 }
 
-func (ps *PlatformService) UpdateSessionsIsGuest(userID string, isGuest bool) error {
-	sessions, err := ps.GetSessions(userID)
+func (ps *PlatformService) UpdateSessionsIsGuest(c *request.Context, userID string, isGuest bool) error {
+	sessions, err := ps.GetSessions(c, userID)
 	if err != nil {
 		return err
 	}
@@ -241,7 +241,7 @@ func (ps *PlatformService) UpdateSessionsIsGuest(userID string, isGuest bool) er
 }
 
 func (ps *PlatformService) RevokeAllSessions(c *request.Context, userID string) error {
-	sessions, err := ps.Store.Session().GetSessions(userID)
+	sessions, err := ps.Store.Session().GetSessions(c, userID)
 	if err != nil {
 		return fmt.Errorf("%s: %w", err.Error(), GetSessionError)
 	}

@@ -8299,7 +8299,7 @@ func (s *OpenTracingLayerSessionStore) Get(c request.CTX, sessionIDOrToken strin
 	return result, err
 }
 
-func (s *OpenTracingLayerSessionStore) GetSessions(userID string) ([]*model.Session, error) {
+func (s *OpenTracingLayerSessionStore) GetSessions(c *request.Context, userID string) ([]*model.Session, error) {
 	origCtx := s.Root.Store.Context()
 	span, newCtx := tracing.StartSpanWithParentByContext(s.Root.Store.Context(), "SessionStore.GetSessions")
 	s.Root.Store.SetContext(newCtx)
@@ -8308,7 +8308,7 @@ func (s *OpenTracingLayerSessionStore) GetSessions(userID string) ([]*model.Sess
 	}()
 
 	defer span.Finish()
-	result, err := s.SessionStore.GetSessions(userID)
+	result, err := s.SessionStore.GetSessions(c, userID)
 	if err != nil {
 		span.LogFields(spanlog.Error(err))
 		ext.Error.Set(span, true)

@@ -79,25 +79,25 @@ func (_m *SessionStore) Get(c request.CTX, sessionIDOrToken string) (*model.Sess
 	return r0, r1
 }
 
-// GetSessions provides a mock function with given fields: userID
-func (_m *SessionStore) GetSessions(userID string) ([]*model.Session, error) {
-	ret := _m.Called(userID)
+// GetSessions provides a mock function with given fields: c, userID
+func (_m *SessionStore) GetSessions(c *request.Context, userID string) ([]*model.Session, error) {
+	ret := _m.Called(c, userID)
 
 	var r0 []*model.Session
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string) ([]*model.Session, error)); ok {
-		return rf(userID)
+	if rf, ok := ret.Get(0).(func(*request.Context, string) ([]*model.Session, error)); ok {
+		return rf(c, userID)
 	}
-	if rf, ok := ret.Get(0).(func(string) []*model.Session); ok {
-		r0 = rf(userID)
+	if rf, ok := ret.Get(0).(func(*request.Context, string) []*model.Session); ok {
+		r0 = rf(c, userID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Session)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(userID)
+	if rf, ok := ret.Get(1).(func(*request.Context, string) error); ok {
+		r1 = rf(c, userID)
 	} else {
 		r1 = ret.Error(1)
 	}

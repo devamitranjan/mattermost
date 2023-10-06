@@ -4,7 +4,6 @@
 package sqlstore
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -101,14 +100,14 @@ func (me SqlSessionStore) Get(c request.CTX, sessionIdOrToken string) (*model.Se
 	return session, nil
 }
 
-func (me SqlSessionStore) GetSessions(userId string) ([]*model.Session, error) {
+func (me SqlSessionStore) GetSessions(c *request.Context, userId string) ([]*model.Session, error) {
 	sessions := []*model.Session{}
 
 	if err := me.GetReplicaX().Select(&sessions, "SELECT * FROM Sessions WHERE UserId = ? ORDER BY LastActivityAt DESC", userId); err != nil {
 		return nil, errors.Wrapf(err, "failed to find Sessions with userId=%s", userId)
 	}
 
-	teamMembers, err := me.Team().GetTeamsForUser(context.Background(), userId, "", true)
+	teamMembers, err := me.Team().GetTeamsForUser(c, userId, "", true)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to find TeamMembers for Session with userId=%s", userId)
 	}

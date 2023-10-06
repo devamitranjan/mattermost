@@ -129,8 +129,8 @@ func (a *App) GetSession(token string) (*model.Session, *model.AppError) {
 	return session, nil
 }
 
-func (a *App) GetSessions(userID string) ([]*model.Session, *model.AppError) {
-	sessions, err := a.ch.srv.platform.GetSessions(userID)
+func (a *App) GetSessions(c *request.Context, userID string) ([]*model.Session, *model.AppError) {
+	sessions, err := a.ch.srv.platform.GetSessions(c, userID)
 	if err != nil {
 		return nil, model.NewAppError("GetSessions", "app.session.get_sessions.app_error", nil, "", http.StatusInternalServerError).Wrap(err)
 	}

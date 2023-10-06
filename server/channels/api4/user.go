@@ -2102,7 +2102,7 @@ func getSessions(c *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessions, appErr := c.App.GetSessions(c.Params.UserId)
+	sessions, appErr := c.App.GetSessions(c.AppContext, c.Params.UserId)
 	if appErr != nil {
 		c.Err = appErr
 		return

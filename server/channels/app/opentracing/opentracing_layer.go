@@ -3593,7 +3593,7 @@ func (a *OpenTracingAppLayer) DeleteToken(token *model.Token) *model.AppError {
 	return resultVar0
 }
 
-func (a *OpenTracingAppLayer) DemoteUserToGuest(c request.CTX, user *model.User) *model.AppError {
+func (a *OpenTracingAppLayer) DemoteUserToGuest(c *request.Context, user *model.User) *model.AppError {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.DemoteUserToGuest")
 
@@ -9273,7 +9273,7 @@ func (a *OpenTracingAppLayer) GetSessionLengthInMillis(session *model.Session) i
 	return resultVar0
 }
 
-func (a *OpenTracingAppLayer) GetSessions(userID string) ([]*model.Session, *model.AppError) {
+func (a *OpenTracingAppLayer) GetSessions(c *request.Context, userID string) ([]*model.Session, *model.AppError) {
 	origCtx := a.ctx
 	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.GetSessions")
 
@@ -9285,7 +9285,7 @@ func (a *OpenTracingAppLayer) GetSessions(userID string) ([]*model.Session, *mod
 	}()
 
 	defer span.Finish()
-	resultVar0, resultVar1 := a.app.GetSessions(userID)
+	resultVar0, resultVar1 := a.app.GetSessions(c, userID)
 
 	if resultVar1 != nil {
 		span.LogFields(spanlog.Error(resultVar1))

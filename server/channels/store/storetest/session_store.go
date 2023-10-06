@@ -83,7 +83,7 @@ func testSessionGet(t *testing.T, ss store.Store) {
 	require.NoError(t, err)
 	require.Equal(t, session.Props, session2.Props, "should match")
 
-	data, err := ss.Session().GetSessions(s1.UserId)
+	data, err := ss.Session().GetSessions(c, s1.UserId)
 	require.NoError(t, err)
 	require.Len(t, data, 3, "should match len")
 }
@@ -198,7 +198,7 @@ func testSessionRemoveToken(t *testing.T, ss store.Store) {
 	_, err = ss.Session().Get(c, s1.Id)
 	require.Error(t, err, "should have been removed")
 
-	data, err := ss.Session().GetSessions(s1.UserId)
+	data, err := ss.Session().GetSessions(c, s1.UserId)
 	require.NoError(t, err)
 	require.Empty(t, data, "should match len")
 }
